@@ -1,0 +1,34 @@
+{
+  "name": "US Layout Default",
+  "layers": [
+    {
+      "name": "Character layer",
+      "keys": [
+        {
+          "code": "KC_GESC"
+        },
+        {
+          "layer": 1,
+          "layerToggleType": "Momentary"
+        },
+        {
+          "code": "KC_SCLN",
+          "modifiers": [
+            {
+              "code": "LALT"
+            },
+            {
+              "code": "LCTL"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "FN Layer"
+    },
+    {
+      "name": "Layer 2"
+    }
+  ]
+}
