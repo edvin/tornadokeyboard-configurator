@@ -4,9 +4,11 @@ import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleListProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ObservableValue
+import javafx.collections.FXCollections
 import javafx.scene.Node
 import tornadofx.*
 import javax.json.JsonObject
+import javax.json.JsonString
 
 enum class LayerToggleType(val actionName: String) {
     Toggle("ACTION_LAYER_TOGGLE"),
@@ -14,7 +16,7 @@ enum class LayerToggleType(val actionName: String) {
 }
 
 class Key(_code: KeyCode? = null) : JsonModel {
-    val modifiersProperty = SimpleListProperty<Key>()
+    val modifiersProperty = SimpleListProperty<KeyCode>(FXCollections.observableArrayList())
     var modifiers by modifiersProperty
 
     val layerProperty = SimpleIntegerProperty()
@@ -37,7 +39,9 @@ class Key(_code: KeyCode? = null) : JsonModel {
     override fun updateModel(json: JsonObject) {
         with(json) {
             if (containsKey("modifiers"))
-                modifiers = getJsonArray("modifiers").toModel()
+                modifiers.setAll(getJsonArray("modifiers")
+                        .map { it as JsonString }
+                        .map { KeyCode.valueOf(it.string) })
 
             if (containsKey("layer"))
                 layer = getInt("layer")

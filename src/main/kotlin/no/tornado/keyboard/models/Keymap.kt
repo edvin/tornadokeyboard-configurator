@@ -23,5 +23,13 @@ class Keymap : JsonModel {
 }
 
 class KeymapModel(keymap: Keymap) : ItemViewModel<Keymap>(keymap) {
+    fun removeLayer(layer: Layer) {
+        item.layers.remove(layer)
+    }
+
+    fun addLayer() = Layer().apply {
+        name = "New layer"
+        item.layers.add(this)
+    }
 }
 

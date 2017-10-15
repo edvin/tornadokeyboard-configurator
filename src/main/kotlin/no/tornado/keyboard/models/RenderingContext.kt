@@ -20,7 +20,7 @@ class RenderingContext(val keymap: Keymap) {
         } else {
             if (key.modifiers?.isNotEmpty() == true) {
                 for (mod in key.modifiers)
-                    s.append("${mod.code}(")
+                    s.append("${mod.name}(")
                 s.append(key.code)
                 s.append(key.modifiers.joinToString("") { ")" })
             } else {

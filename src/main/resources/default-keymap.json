@@ -14,12 +14,8 @@
         {
           "code": "KC_SCLN",
           "modifiers": [
-            {
-              "code": "LALT"
-            },
-            {
-              "code": "LCTL"
-            }
+            "LALT",
+            "LCTL"
           ]
         }
       ]

@@ -1,8 +1,17 @@
 package no.tornado.keyboard.views
 
+import javafx.beans.binding.Bindings
+import javafx.geometry.Orientation
+import javafx.scene.control.ListCell
 import javafx.scene.paint.Color
-import no.tornado.keyboard.models.*
+import javafx.scene.text.Text
+import no.tornado.keyboard.app.Styles
+import no.tornado.keyboard.models.Key
+import no.tornado.keyboard.models.KeyCode
+import no.tornado.keyboard.models.KeyModel
+import no.tornado.keyboard.models.LayerModel
 import tornadofx.*
+import tornadofx.Stylesheet as s
 
 class LayerEditor : View() {
     val layer: LayerModel by inject()
@@ -47,14 +56,47 @@ class LayerEditor : View() {
         }
     }
 
+
     private fun editKey(keyNode: KeyboardKey, key: Key) {
         val model = KeyModel(key)
         builderWindow("Edit key") {
             form {
-                fieldset {
+                prefWidth = 350.0
+                fieldset(labelPosition = Orientation.VERTICAL) {
                     field("Key code") {
-                        combobox(model.code, KeyCode.values().toList()) {
-                            converter = KeyCodeConverter
+                        combobox(model.code, KeyCode.values().toList().filter { it.isSelectable }) {
+                            cellFormat(formatButtonCell = false) {
+                                graphic = hbox(10) {
+                                    label(it.group.name).addClass(Styles.grey)
+                                    text(it.description)
+                                }
+                            }
+                            buttonCell = object : ListCell<KeyCode>() {
+                                override fun updateItem(item: KeyCode?, empty: Boolean) {
+                                    super.updateItem(item, empty)
+                                    graphic = Text(item?.description)
+                                }
+                            }
+                        }
+                    }
+
+                    titledpane("Modifiers") {
+                        prefHeight = 130.0
+                        isAnimated = false
+                        datagrid(KeyCode.values().filter { it.isModifier }) {
+                            cellFormat {
+                                text = it.description
+                            }
+                            multiSelect = true
+                            cellWidth = 90.0
+                            cellHeight = 30.0
+
+                            runLater {
+                                key.modifiers.forEach {
+                                    selectionModel.select(it)
+                                }
+                                Bindings.bindContent(model.modifiers.value, selectionModel.selectedItems)
+                            }
                         }
                     }
                 }
@@ -65,7 +107,6 @@ class LayerEditor : View() {
                 }
             }
         }
-
     }
 
     override fun onSave() {
