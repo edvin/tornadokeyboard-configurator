@@ -1,8 +1,6 @@
 package no.tornado.keyboard.models
 
-import javafx.beans.property.SimpleListProperty
 import javafx.beans.property.SimpleStringProperty
-import javafx.collections.FXCollections
 import javafx.scene.paint.Color
 import tornadofx.*
 import javax.json.JsonObject
@@ -11,16 +9,16 @@ class Layer : JsonModel {
     val nameProperty = SimpleStringProperty()
     var name by nameProperty
 
-    val keysProperty = SimpleListProperty<Key>()
-    var keys by keysProperty
+    val keys = MutableList(62) { Key(KeyCode.KC_TRNS) }
 
     val rows: List<List<Key>>
         get() = rowSeparators.map { keys.subList(it.first, Math.min(it.last + 1, keys.size)) }
 
     override fun updateModel(json: JsonObject) {
         name = json.string("name")
-        keys = json.jsonArray("keys")?.toModel()
-        ensureKeys()
+        json.jsonArray("keys")
+                ?.toModel<Key>()
+                ?.forEachIndexed { index, key -> keys[index] = key }
     }
 
     companion object {
@@ -30,17 +28,6 @@ class Layer : JsonModel {
         val R4 = 41..52
         val R5 = 53..61
         val rowSeparators = listOf(R1, R2, R3, R4, R5)
-    }
-
-    init {
-        ensureKeys()
-    }
-
-    private fun ensureKeys() {
-        if (keys == null) keys = FXCollections.observableArrayList()
-
-        while (keys.size < 62)
-            keys.add(Key(KeyCode.KC_TRNS))
     }
 }
 

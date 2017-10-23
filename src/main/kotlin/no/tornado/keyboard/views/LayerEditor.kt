@@ -21,9 +21,13 @@ class LayerEditor : View() {
     }
 
     override val root = borderpane {
+        top {
+            paddingAll = 10
+            textfield(layer.name).addClass(Styles.layerName)
+        }
         center {
             stackpane {
-                paddingAll = 40
+                paddingAll = 30
                 keyboard {
                     background = Color.TRANSPARENT.asBackground()
                     widthProperty().onChange {

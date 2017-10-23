@@ -9,6 +9,7 @@ import tornadofx.*
 class Styles : Stylesheet() {
     companion object {
         val keymapName by cssclass()
+        val layerName by cssclass()
         val grey by cssclass()
     }
 
@@ -19,6 +20,12 @@ class Styles : Stylesheet() {
         textField and keymapName {
             padding = box(10.px)
             fontSize = 20.px
+            fontWeight = FontWeight.BOLD
+            backgroundColor += Color.TRANSPARENT
+        }
+
+        textField and layerName {
+            fontSize = 14.px
             fontWeight = FontWeight.BOLD
             backgroundColor += Color.TRANSPARENT
         }
