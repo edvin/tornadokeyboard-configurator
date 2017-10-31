@@ -1,5 +1,6 @@
 package no.tornado.keyboard.models
 
+import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.scene.paint.Color
 import tornadofx.*
@@ -10,6 +11,9 @@ class Layer : JsonModel {
     var name by nameProperty
 
     val keys = MutableList(62) { Key(KeyCode.KC_TRNS) }
+
+    val keymapProperty = SimpleObjectProperty<Keymap>()
+    var keymap by keymapProperty
 
     val rows: List<List<Key>>
         get() = rowSeparators.map { keys.subList(it.first, Math.min(it.last + 1, keys.size)) }

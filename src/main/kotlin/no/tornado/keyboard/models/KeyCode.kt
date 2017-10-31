@@ -18,7 +18,7 @@ enum class KeyCodeGroup {
     Letters
 }
 
-enum class KeyCode(val description: String, val group: KeyCodeGroup = KeyCodeGroup.Other, val isModifier: Boolean = false, val isSelectable: Boolean = true) {
+enum class KeyCode(val description: String, val group: KeyCodeGroup = KeyCodeGroup.Other, val isModifier: Boolean = false, val isSelectable: Boolean = true, val isToggle: Boolean = false, val info: String? = null) {
     F("FN", isSelectable = false),
     LCTL("Left Control", isModifier = true, isSelectable = false),
     RCTL("Right Control", isModifier = true, isSelectable = false),
@@ -161,4 +161,12 @@ enum class KeyCode(val description: String, val group: KeyCodeGroup = KeyCodeGro
     KC_MS_WH_DOWN("Mouse Wheel Down", group = KeyCodeGroup.Mouse),
     KC_MS_WH_LEFT("Mouse Wheel Left", group = KeyCodeGroup.Mouse),
     KC_MS_WH_RIGHT("Mouse Wheel Right", group = KeyCodeGroup.Mouse),
+
+    /* Layer switching */
+    TG("Toggle layer", isToggle = true, group = KeyCodeGroup.LayerSwitching, info = "Switch to layer on click, second click returns to previous layer"),
+    TO("Direct layer switch", isToggle = true, group = KeyCodeGroup.LayerSwitching, info = "Direct switch to layer"),
+    MO("Momentary layer toggle", isToggle = true, group = KeyCodeGroup.LayerSwitching, info = "Switch to layer only while holding down key"),
+    OSL("One shot layer", isToggle = true, group = KeyCodeGroup.LayerSwitching, info = "Click to switch layer only until the next keypress. Returns to previous layer immediately after."),
+    TT("Layer tap toggle", isToggle = true, group = KeyCodeGroup.LayerSwitching, info = "Works like momentary layer switch while held, and toggle layer if clicked"),
+
 }

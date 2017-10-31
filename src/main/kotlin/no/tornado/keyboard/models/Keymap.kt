@@ -17,6 +17,7 @@ class Keymap : JsonModel {
         with(json) {
             name = string("name")
             layers = getJsonArray("layers").toModel()
+            layers?.forEach { it.keymap = this@Keymap }
         }
     }
 
@@ -29,6 +30,7 @@ class KeymapModel(keymap: Keymap) : ItemViewModel<Keymap>(keymap) {
 
     fun addLayer() = Layer().apply {
         name = "New layer"
+        keymap = item
         item.layers.add(this)
     }
 }
