@@ -9,10 +9,7 @@ import javafx.scene.text.Text
 import javafx.stage.Modality
 import javafx.stage.StageStyle
 import no.tornado.keyboard.app.Styles
-import no.tornado.keyboard.models.Key
-import no.tornado.keyboard.models.KeyCode
-import no.tornado.keyboard.models.KeyModel
-import no.tornado.keyboard.models.LayerModel
+import no.tornado.keyboard.models.*
 import tornadofx.*
 import tornadofx.Stylesheet as s
 
@@ -54,8 +51,14 @@ class LayerEditor : View() {
             keyWidth = kw
             keyHeight = kh
             background = kc.asBackground()
-            textProperty().bind(key.descriptionProperty)
-            graphicProperty().bind(key.graphicProperty)
+            graphic = vbox {
+                alignment = Pos.CENTER
+                label(key.descriptionProperty).isWrapText = true
+                label(key.modifierDescriptionProperty) {
+                    addClass(Styles.grey, Styles.small)
+                    removeWhen(key.modifierDescriptionProperty.isEmpty)
+                }
+            }
             if (addSpacer) spacer()
             action {
                 editKey(key)
@@ -96,17 +99,18 @@ class LayerEditor : View() {
                             }
                         }
                     }
-                    val isToggleBinding = model.code.booleanBinding { it?.isToggle ?: false }
+                    val isLayerSwitchingKey = model.code.booleanBinding { it?.group == KeyCodeGroup.LayerSwitching }
 
                     field("Layer") {
-                        // TODO: Keep layout count up to date
-                        combobox(key.layerProperty, values = layer.item.keymap.layers.size)
+                        removeWhen { !isLayerSwitchingKey }
+                        combobox(model.layer, values = IntRange(1, layer.item.keymap.layers.size).toList())
                     }
+
                     field("Modifiers") {
-                        removeWhen { isToggleBinding }
-                        datagrid(KeyCode.values().filter { it.isModifier }) {
+                        removeWhen { isLayerSwitchingKey }
+                        datagrid(KeyCode.selectableKeyCodes) {
                             cellFormat {
-                                text = it.description
+                                text = it.info
                             }
                             multiSelect = true
                             cellWidth = 90.0
@@ -114,7 +118,7 @@ class LayerEditor : View() {
                             prefHeight = 95.0
 
                             runLater {
-                                key.modifiers.forEach {
+                                model.modifiers.value.forEach {
                                     selectionModel.select(it)
                                 }
                                 Bindings.bindContent(model.modifiers.value, selectionModel.selectedItems)

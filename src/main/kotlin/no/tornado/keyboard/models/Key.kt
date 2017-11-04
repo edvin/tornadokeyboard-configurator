@@ -3,6 +3,7 @@ package no.tornado.keyboard.models
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleListProperty
 import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.property.SimpleStringProperty
 import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.scene.Node
@@ -28,13 +29,8 @@ class Key(_code: KeyCode? = null) : JsonModel {
     val codeProperty = SimpleObjectProperty<KeyCode>(_code)
     var code by codeProperty
 
-    val descriptionProperty = stringBinding(codeProperty) {
-        code?.description ?: ""
-    }
-
-    val graphicProperty: ObservableValue<Node?> = objectBinding(codeProperty) {
-        null
-    }
+    val descriptionProperty = SimpleStringProperty()
+    val modifierDescriptionProperty = SimpleStringProperty()
 
     override fun updateModel(json: JsonObject) {
         with(json) {
@@ -52,6 +48,29 @@ class Key(_code: KeyCode? = null) : JsonModel {
             if (containsKey("code"))
                 code = KeyCode.valueOf(getString("code"))
         }
+        updateDescription()
+    }
+
+    fun updateDescription() {
+        val desc = StringBuilder()
+
+        val k = when (code?.group) {
+            KeyCodeGroup.LayerSwitching -> "${code.name}\nL$layer"
+            null -> ""
+            else -> code.description
+        }
+        desc.append(k)
+        descriptionProperty.value = desc.toString()
+
+        modifierDescriptionProperty.value = if (modifiers.isNotEmpty())
+             modifiers.map { it.description }.joinToString("+") + "\n"
+        else
+            null
+
+    }
+
+    init {
+        updateDescription()
     }
 }
 
@@ -61,5 +80,8 @@ class KeyModel(key: Key? = null) : ItemViewModel<Key>(key) {
     val layerToggleType = bind(Key::layerToggleTypeProperty)
     val code = bind(Key::codeProperty)
     val description = bind(Key::descriptionProperty)
-    val graphic = bind(Key::graphicProperty)
+
+    override fun onCommit() {
+        item?.updateDescription()
+    }
 }

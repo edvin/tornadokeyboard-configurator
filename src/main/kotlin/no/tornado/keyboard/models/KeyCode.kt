@@ -18,14 +18,14 @@ enum class KeyCodeGroup {
     Letters
 }
 
-enum class KeyCode(val description: String, val group: KeyCodeGroup = KeyCodeGroup.Other, val isModifier: Boolean = false, val isSelectable: Boolean = true, val isToggle: Boolean = false, val info: String? = null) {
+enum class KeyCode(val description: String, val group: KeyCodeGroup = KeyCodeGroup.Other, val isModifier: Boolean = false, val isSelectable: Boolean = true, val info: String? = null) {
     F("FN", isSelectable = false),
-    LCTL("Left Control", isModifier = true, isSelectable = false),
-    RCTL("Right Control", isModifier = true, isSelectable = false),
-    LALT("Left Alt", isModifier = true, isSelectable = false),
-    RALT("Right Alt", isModifier = true, isSelectable = false),
-    LSHFT("Left Shift", isModifier = true, isSelectable = false),
-    RSHFT("Right Shift", isModifier = true, isSelectable = false),
+    LCTL("LCTRL", isModifier = true, isSelectable = false, info = "Left Control"),
+    RCTL("RCTRL", isModifier = true, isSelectable = false, info = "Right Control"),
+    LALT("LALT", isModifier = true, isSelectable = false, info = "Left Alt"),
+    RALT("RALT", isModifier = true, isSelectable = false, info = "Right Alt"),
+    LSHFT("LSHFT", isModifier = true, isSelectable = false, info = "Left Shift"),
+    RSHFT("RSHFT", isModifier = true, isSelectable = false, info = "Right Shift"),
 
     KC_TRNS("", isSelectable = true),
     KC_NO("", isSelectable = false),
@@ -163,10 +163,14 @@ enum class KeyCode(val description: String, val group: KeyCodeGroup = KeyCodeGro
     KC_MS_WH_RIGHT("Mouse Wheel Right", group = KeyCodeGroup.Mouse),
 
     /* Layer switching */
-    TG("Toggle layer", isToggle = true, group = KeyCodeGroup.LayerSwitching, info = "Switch to layer on click, second click returns to previous layer"),
-    TO("Direct layer switch", isToggle = true, group = KeyCodeGroup.LayerSwitching, info = "Direct switch to layer"),
-    MO("Momentary layer toggle", isToggle = true, group = KeyCodeGroup.LayerSwitching, info = "Switch to layer only while holding down key"),
-    OSL("One shot layer", isToggle = true, group = KeyCodeGroup.LayerSwitching, info = "Click to switch layer only until the next keypress. Returns to previous layer immediately after."),
-    TT("Layer tap toggle", isToggle = true, group = KeyCodeGroup.LayerSwitching, info = "Works like momentary layer switch while held, and toggle layer if clicked"),
+    TG("Toggle layer", group = KeyCodeGroup.LayerSwitching, info = "Switch to layer on click, second click returns to previous layer"),
+    TO("Direct layer switch", group = KeyCodeGroup.LayerSwitching, info = "Direct switch to layer"),
+    MO("Momentary layer toggle", group = KeyCodeGroup.LayerSwitching, info = "Switch to layer only while holding down key"),
+    OSL("One shot layer", group = KeyCodeGroup.LayerSwitching, info = "Click to switch layer only until the next keypress. Returns to previous layer immediately after."),
+    TT("Layer tap toggle", group = KeyCodeGroup.LayerSwitching, info = "Works like momentary layer switch while held, and toggle layer if clicked");
+
+    companion object {
+        val selectableKeyCodes: List<KeyCode> by lazy { KeyCode.values().filter { it.isModifier } }
+    }
 
 }
